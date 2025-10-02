@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Servicio para inicializar datos básicos del sistema
+ * Se ejecuta al iniciar la aplicación y crea los fondos disponibles
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -17,6 +21,11 @@ public class DataInitializationService implements CommandLineRunner {
     
     private final FondoRepository fondoRepository;
     
+    /**
+     * Se ejecuta al iniciar la aplicación
+     * Inicializa los fondos si la base de datos está vacía
+     * @param args Argumentos de la aplicación
+     */
     @Override
     public void run(String... args) throws Exception {
         if (fondoRepository.count() == 0) {
@@ -25,6 +34,10 @@ public class DataInitializationService implements CommandLineRunner {
         }
     }
     
+    /**
+     * Crea los fondos iniciales del sistema
+     * Incluye FPV y FIC con sus montos mínimos
+     */
     private void inicializarFondos() {
         List<Fondo> fondos = Arrays.asList(
             new Fondo("1","FPV","FPV_BTG_PACTUAL_RECAUDADORA", 75000.0),

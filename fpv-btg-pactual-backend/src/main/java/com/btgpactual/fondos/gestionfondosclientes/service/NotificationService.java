@@ -62,6 +62,12 @@ public class NotificationService {
         }
     }
     
+    /**
+     * Envía un email al cliente
+     * @param email Dirección de email del cliente
+     * @param asunto Asunto del email
+     * @param mensaje Contenido del mensaje
+     */
     private void enviarEmail(String email, String asunto, String mensaje) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -77,12 +83,15 @@ public class NotificationService {
         }
     }
     
+    /**
+     * Simula el envío de un SMS (para desarrollo)
+     * @param telefono Número de teléfono del cliente
+     * @param mensaje Contenido del mensaje
+     */
     private void enviarSMS(String telefono, String mensaje) {
-
         log.info("SMS SIMULADO:");
         log.info("Para: {}", telefono);
         log.info("Mensaje: {}", mensaje);
         log.info("SMS simulado enviado exitosamente a {}", telefono);
-
     }
 }

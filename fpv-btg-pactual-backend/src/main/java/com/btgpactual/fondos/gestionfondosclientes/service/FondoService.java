@@ -130,15 +130,34 @@ public class FondoService {
         return cliente;
     }
 
+    /**
+     * Obtiene el cliente o lo crea si no existe
+     * @return Cliente existente o nuevo
+     */
     private Cliente obtenerCliente() {
         return clienteRepository.findById(Constants.CLIENTE_ID)
                 .orElse(crearClienteInicial());
     }
+    
+    /**
+     * Busca un fondo por su ID
+     * @param idFondo ID del fondo a buscar
+     * @return Fondo encontrado
+     * @throws FondoNotFoundException Si el fondo no existe
+     */
     private Fondo obtenerFondo(String idFondo) {
         return fondoRepository.findById(idFondo)
                 .orElseThrow(() -> new FondoNotFoundException("El fondo " + idFondo + " no existe"));
     }
 
+    /**
+     * Valida que la suscripción sea válida
+     * @param cliente Cliente que quiere suscribirse
+     * @param fondo Fondo al que se quiere suscribir
+     * @param request Datos de la suscripción
+     * @throws IllegalArgumentException Si no cumple validaciones
+     * @throws InsufficientFundsException Si no hay saldo suficiente
+     */
     private void validarSuscripcion(Cliente cliente, Fondo fondo, SuscripcionRequest request) {
         if (request.getMonto() < fondo.getMontoMinimo()) {
             throw new IllegalArgumentException(String.format(
@@ -158,6 +177,12 @@ public class FondoService {
         }
     }
 
+    /**
+     * Aplica la suscripción al cliente
+     * @param cliente Cliente que se suscribe
+     * @param fondo Fondo al que se suscribe
+     * @param request Datos de la suscripción
+     */
     private void aplicarSuscripcion(Cliente cliente, Fondo fondo, SuscripcionRequest request) {
         cliente.setSaldo(cliente.getSaldo() - request.getMonto());
         cliente.setPreferenciaNotificacion(request.getPreferenciaNotificacion());
@@ -172,6 +197,12 @@ public class FondoService {
         cliente.getFondosActivos().add(fondoActivo);
     }
 
+    /**
+     * Registra la transacción en el historial del cliente
+     * @param cliente Cliente que realiza la transacción
+     * @param fondo Fondo involucrado en la transacción
+     * @param request Datos de la suscripción
+     */
     private void registrarTransaccion(Cliente cliente, Fondo fondo, SuscripcionRequest request) {
         Transaccion transaccion = new Transaccion(
                 UUID.randomUUID().toString(),
@@ -182,6 +213,13 @@ public class FondoService {
         );
         cliente.getHistorialTransacciones().add(transaccion);
     }
+    
+    /**
+     * Envía notificación de suscripción al cliente
+     * @param cliente Cliente que se suscribió
+     * @param fondo Fondo al que se suscribió
+     * @param request Datos de la suscripción
+     */
     private void notificarSuscripcion(Cliente cliente, Fondo fondo, SuscripcionRequest request) {
         notificationService.enviarNotificacionSuscripcion(cliente, fondo, request.getMonto());
     }
